@@ -16,12 +16,28 @@ class FeedPage extends StatelessWidget {
               itemCount: 10,
               itemBuilder: (context, index) {
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 8.0, vertical: 8.0),
                   child: Column(
                     children: [
-                      CircleAvatar(
-                        radius: 30,
-                        backgroundColor: Colors.grey[300],
+                      Container(
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: LinearGradient(
+                            begin: Alignment.bottomLeft,
+                            end: Alignment.topRight,
+                            colors: [
+                              Colors.yellow,
+                              Colors.pink,
+                              Colors.purple,
+                            ],
+                          ),
+                        ),
+                        padding: const EdgeInsets.all(3),
+                        child: const CircleAvatar(
+                          radius: 26,
+                          backgroundColor: Colors.black,
+                        ),
                       ),
                       const SizedBox(height: 4),
                     ],
