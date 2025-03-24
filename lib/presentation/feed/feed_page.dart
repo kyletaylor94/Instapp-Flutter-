@@ -9,15 +9,17 @@ class FeedPage extends StatelessWidget {
       body: Column(
         children: [
           Container(
-            height: 100,
-            padding: const EdgeInsets.symmetric(vertical: 10),
+            height: 120,
+            padding: const EdgeInsets.symmetric(
+              vertical: 10,
+            ),
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: 10,
               itemBuilder: (context, index) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 8.0, vertical: 8.0),
+                      horizontal: 12.0, vertical: 8.0),
                   child: Column(
                     children: [
                       Container(
@@ -40,6 +42,14 @@ class FeedPage extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 4),
+                      const Text(
+                        'Your story',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
                     ],
                   ),
                 );
