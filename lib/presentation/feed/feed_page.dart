@@ -1,4 +1,7 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:insta_app_flutter/presentation/comments_and_likes_sheets/comment_page_sheet.dart';
+import 'package:insta_app_flutter/presentation/comments_and_likes_sheets/who_likes_the_post.dart';
 
 class FeedPage extends StatelessWidget {
   const FeedPage({super.key});
@@ -90,31 +93,90 @@ class FeedPage extends StatelessWidget {
                       color: Colors.black,
                     ),
                     const SizedBox(height: 10),
-                    const Row(
+                    Row(
                       children: [
-                        SizedBox(width: 10),
-                        Row(
+                        const SizedBox(width: 10),
+                        const Row(
                           children: [
                             Icon(Icons.favorite),
                             SizedBox(width: 4),
                             Text('5'),
                           ],
                         ),
-                        SizedBox(width: 20),
-                        Row(
-                          children: [
-                            Icon(Icons.chat_bubble_outline),
-                            SizedBox(width: 4),
-                            Text('32'),
-                          ],
+                        const SizedBox(width: 20),
+                        GestureDetector(
+                          onTap: () {
+                            showModalBottomSheet(
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(
+                                    10.0,
+                                  ),
+                                ),
+                              ),
+                              backgroundColor: Colors.white,
+                              context: context,
+                              builder: (context) => const CommentPageSheet(),
+                            );
+                          },
+                          child: const Row(
+                            children: [
+                              Icon(Icons.chat_bubble_outline),
+                              SizedBox(width: 4),
+                              Text('32'),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 10),
-                    const Column(
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
+                          children: [
+                            const SizedBox(width: 10),
+                            RichText(
+                              text: TextSpan(
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                ),
+                                children: [
+                                  const TextSpan(
+                                    text: 'kyle ',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  const TextSpan(text: 'and '),
+                                  TextSpan(
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        showModalBottomSheet(
+                                          shape: const RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.vertical(
+                                              top: Radius.circular(
+                                                10.0,
+                                              ),
+                                            ),
+                                          ),
+                                          backgroundColor: Colors.white,
+                                          context: context,
+                                          builder: (context) =>
+                                              const WhoLikesThePost(),
+                                        );
+                                      },
+                                    text: 'other people ',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  const TextSpan(text: 'likes this'),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 3),
+                        const Row(
                           children: [
                             SizedBox(width: 10),
                             Text(
@@ -127,7 +189,7 @@ class FeedPage extends StatelessWidget {
                             Text('caption'),
                           ],
                         ),
-                        Row(
+                        const Row(
                           children: [
                             SizedBox(width: 10),
                             Text(

@@ -5,17 +5,22 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          SizedBox(height: 30),
-          Row(
+          const SizedBox(height: 30),
+          const Row(
             children: [
               SizedBox(width: 30),
-              CircleAvatar(
-                radius: 30,
-                backgroundColor: Colors.black,
+              Column(
+                children: [
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Colors.black,
+                  ),
+                  Text('user'),
+                ],
               ),
               SizedBox(width: 30),
               Column(
@@ -58,6 +63,36 @@ class ProfilePage extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(height: 30),
+          Container(
+            width: MediaQuery.of(context).size.width - 32,
+            height: 30,
+            decoration: BoxDecoration(
+              border: Border.all(),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: const Center(
+              child: Text('Edit profile'),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Expanded(
+            child: GridView.count(
+              crossAxisCount: 3,
+              crossAxisSpacing: 3,
+              mainAxisSpacing: 3,
+              padding: const EdgeInsets.all(8),
+              children: List.generate(12, (index) {
+                return Center(
+                  child: Container(
+                    width: 140,
+                    height: 180,
+                    color: Colors.blue,
+                  ),
+                );
+              }),
+            ),
+          )
         ],
       ),
     );
