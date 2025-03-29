@@ -11,6 +11,7 @@ dependencies:
     sdk: flutter
   image_picker: ^1.1.2
   ios_search_appbar: ^1.1.1
+  photo_view: ^0.15.0
 
 dev_dependencies:
   flutter_test:
@@ -21,3 +22,6 @@ flutter:
   uses-material-design: true
   assets:
     - assets/logo.png
+    - assets/mockPhoto.jpg
+    - assets/mockPhoto1.jpg
+    - assets/mockPhoto2.jpg

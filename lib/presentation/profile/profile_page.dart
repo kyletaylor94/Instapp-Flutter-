@@ -1,7 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
+
+  void _openPhotoView(BuildContext context, int index) {
+    showDialog(
+      context: context,
+      builder: (context) => Stack(
+        children: [
+          Container(color: Colors.black),
+          PhotoViewGallery.builder(
+            itemCount: 12,
+            builder: (context, index) {
+              return PhotoViewGalleryPageOptions(
+                imageProvider: const AssetImage("assets/mockPhoto.jpg"),
+                minScale: PhotoViewComputedScale.contained,
+                maxScale: PhotoViewComputedScale.covered * 2,
+              );
+            },
+            scrollPhysics: const BouncingScrollPhysics(),
+            backgroundDecoration: const BoxDecoration(color: Colors.black),
+            pageController: PageController(initialPage: index),
+          ),
+          Positioned(
+            top: 40,
+            right: 20,
+            child: IconButton(
+              icon: const Icon(Icons.close, color: Colors.white, size: 30),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,15 +116,20 @@ class ProfilePage extends StatelessWidget {
               crossAxisSpacing: 3,
               mainAxisSpacing: 3,
               padding: const EdgeInsets.all(8),
-              children: List.generate(12, (index) {
-                return Center(
-                  child: Container(
-                    width: 140,
-                    height: 180,
-                    color: Colors.blue,
-                  ),
-                );
-              }),
+              children: List.generate(
+                12,
+                (index) {
+                  return GestureDetector(
+                    onTap: () => _openPhotoView(context, index),
+                    child: Image.asset(
+                      'assets/mockPhoto.jpg',
+                      width: 140,
+                      height: 180,
+                      fit: BoxFit.cover,
+                    ),
+                  );
+                },
+              ),
             ),
           )
         ],
