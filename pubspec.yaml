@@ -10,7 +10,6 @@ dependencies:
   flutter:
     sdk: flutter
   image_picker: ^1.1.2
-  ios_search_appbar: ^1.1.1
   photo_view: ^0.15.0
 
 dev_dependencies:
