@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:story_view/story_view.dart';
 
-class StoryExample extends StatefulWidget {
-  const StoryExample({super.key});
+class StoryPage extends StatefulWidget {
+  const StoryPage({super.key});
   @override
   // ignore: library_private_types_in_public_api
-  _StoryExampleState createState() => _StoryExampleState();
+  _StoryPageState createState() => _StoryPageState();
 }
 
-class _StoryExampleState extends State<StoryExample> {
+class _StoryPageState extends State<StoryPage> {
   final storyController = StoryController();
 
   @override
