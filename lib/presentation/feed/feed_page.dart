@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:insta_app_flutter/presentation/comments_and_likes_sheets/comment_page_sheet.dart';
 import 'package:insta_app_flutter/presentation/comments_and_likes_sheets/who_likes_the_post.dart';
+import 'package:insta_app_flutter/presentation/stories/story_example.dart';
 import 'package:insta_app_flutter/presentation/stories/story_page.dart';
 
 class FeedPage extends StatelessWidget {
@@ -40,7 +41,7 @@ class FeedPage extends StatelessWidget {
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => const StoryPage(),
+                      builder: (context) => StoryExample(),
                     ),
                   );
                 },
