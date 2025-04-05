@@ -1,5 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:insta_app_flutter/data/mock_users.dart';
+import 'package:insta_app_flutter/entity/current_user.dart';
 
 class WhoLikesThePost extends StatefulWidget {
   const WhoLikesThePost({super.key});
@@ -10,7 +11,14 @@ class WhoLikesThePost extends StatefulWidget {
 
 class _WhoLikesThePostState extends State<WhoLikesThePost> {
   String query = '';
-  final List<String> users = List.generate(20, (index) => 'User $index');
+  final List<CurrentUser> users = MockUsers.users;
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +32,7 @@ class _WhoLikesThePostState extends State<WhoLikesThePost> {
           _buildTitle(),
           const Divider(),
           const SizedBox(height: 10),
-          _buildSearchField(),
+          _searchTextField(),
           const SizedBox(height: 10),
           Expanded(child: _buildUserList()),
         ],
@@ -50,10 +58,24 @@ class _WhoLikesThePostState extends State<WhoLikesThePost> {
     );
   }
 
-  Widget _buildSearchField() {
-    return CupertinoSearchTextField(
+  Widget _searchTextField() {
+    return TextField(
+      controller: _searchController,
+      decoration: InputDecoration(
+        hintText: 'Search',
+        prefixIcon: const Icon(Icons.search),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide.none,
+        ),
+        filled: true,
+        fillColor: Colors.grey[200],
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      ),
       onChanged: (value) {
-        setState(() => query = value.toLowerCase());
+        setState(() {
+          query = value.toLowerCase();
+        });
       },
     );
   }
@@ -61,18 +83,29 @@ class _WhoLikesThePostState extends State<WhoLikesThePost> {
   Widget _buildUserList() {
     return ListView.builder(
       itemCount: users.length,
-      itemBuilder: (context, index) => _buildUserItem(users[index]),
+      itemBuilder: (context, index) {
+        final user = users[index];
+        if (query.isNotEmpty && 
+            !user.username.toLowerCase().contains(query) && 
+            !user.fullName.toLowerCase().contains(query)) {
+          return const SizedBox.shrink();
+        }
+        return _buildUserItem(user);
+      },
     );
   }
 
-  Widget _buildUserItem(String userName) {
+  Widget _buildUserItem(CurrentUser user) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
         children: [
-          const CircleAvatar(radius: 20, backgroundColor: Colors.black),
+          CircleAvatar(
+            radius: 20,
+            backgroundImage: user.profileImage.image,
+          ),
           const SizedBox(width: 10),
-          _buildUserInfo(userName),
+          _buildUserInfo(user),
           const Spacer(),
           _buildFollowButton(),
         ],
@@ -80,12 +113,12 @@ class _WhoLikesThePostState extends State<WhoLikesThePost> {
     );
   }
 
-  Widget _buildUserInfo(String userName) {
+  Widget _buildUserInfo(CurrentUser user) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(userName, style: const TextStyle(fontWeight: FontWeight.bold)),
-        const Text('real name', style: TextStyle(color: Colors.grey)),
+        Text(user.username, style: const TextStyle(fontWeight: FontWeight.bold)),
+        Text(user.fullName, style: const TextStyle(color: Colors.grey)),
       ],
     );
   }

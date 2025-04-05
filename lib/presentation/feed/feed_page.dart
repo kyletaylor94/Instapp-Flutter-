@@ -12,6 +12,7 @@ class FeedPage extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
+          const SizedBox(height: 10),
           _buildStoryList(),
           const Divider(height: 1),
           Expanded(
