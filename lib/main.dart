@@ -22,20 +22,38 @@ void main() {
   );
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends StatefulWidget {
   const MainApp({super.key});
+
+  @override
+  State<MainApp> createState() => _MainAppState();
+}
+
+class _MainAppState extends State<MainApp> {
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authViewModel = Provider.of<AuthViewModel>(context, listen: false);
+      _checkAuthStatus(authViewModel);
+      print("INITIAL AUTH STATUS: ${authViewModel.currentUserFromAPI}");
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Consumer<AuthViewModel>(builder: (context, authViewModel, _) {
-        if (authViewModel.isAuthenticated == true) {
-          return const BottomNavBar();
-        } else {
-          return const LoginPage();
-        }
-      }),
+      home: Consumer<AuthViewModel>(
+        builder: (context, authViewModel, _) {
+          if (authViewModel.currentUserFromAPI != null) {
+            return const BottomNavBar();
+          } else {
+            return const LoginPage();
+          }
+        },
+      ),
     );
   }
 

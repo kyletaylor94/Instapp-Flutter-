@@ -38,6 +38,7 @@ class _RegisterPageState extends State<RegisterPage> {
     if (authViewModel.isAuthenticated == true) {
       if (content.mounted) {
         Navigator.pushReplacement(
+          // ignore: use_build_context_synchronously
           context,
           MaterialPageRoute(
             builder: (context) => const BottomNavBar(),
@@ -45,6 +46,7 @@ class _RegisterPageState extends State<RegisterPage> {
         );
       }
     } else {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Registration failed!'),

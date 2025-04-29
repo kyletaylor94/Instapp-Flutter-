@@ -173,6 +173,12 @@ class AuthServiceImpl extends AuthService {
   Future<User> fetchCurrentUserFromAPI() async {
     await loadTokens();
 
+    // Check if tokens are valid, if not fetch new ones
+    if (authToken == null || refreshToken == null) {
+      print('No tokens found when fetching user, fetching new tokens');
+      await fetchToken();
+    }
+
     dio.options.headers['content-Type'] = 'application/json';
     dio.options.headers['authorization'] = 'Bearer $authToken';
 
@@ -181,7 +187,7 @@ class AuthServiceImpl extends AuthService {
           await dio.get(constants.baseUrl + constants.fetchCurrenUserUrl);
       print('Current user API response: ${response.data}');
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         return User.fromJson(response.data);
       } else {
         throw Exception('Failed to fetch user: ${response.statusCode}');

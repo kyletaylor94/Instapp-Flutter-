@@ -35,6 +35,7 @@ class BottomNavBarState extends State<BottomNavBar> {
 
     await authViewModel.signOut();
 
+    // ignore: use_build_context_synchronously
     Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const LoginPage()));
   }
