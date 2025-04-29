@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AuthButton extends StatelessWidget {
   final String placeholder;
-  final void task;
+  final VoidCallback task;
 
   const AuthButton({
     super.key,
@@ -13,9 +13,7 @@ class AuthButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        task;
-      },
+      onTap: task,
       child: Container(
         width: MediaQuery.of(context).size.width - 32,
         height: 50,

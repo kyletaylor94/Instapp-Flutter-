@@ -10,7 +10,7 @@ abstract class SearchService {
 class SearchServiceImpl extends SearchService {
   @override
   Future<List<CurrentUser>> fetchAllUsers() async {
-    return await MockUsers.users;
+    return MockUsers.users;
   }
 
   @override

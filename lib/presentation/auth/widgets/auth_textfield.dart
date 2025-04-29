@@ -32,6 +32,7 @@ class AuthTextfield extends StatelessWidget {
           ),
           Expanded(
             child: TextField(
+              controller: controller,
               decoration: InputDecoration(
                 hintText: placeholder,
                 hintStyle: const TextStyle(

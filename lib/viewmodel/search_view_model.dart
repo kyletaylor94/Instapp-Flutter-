@@ -2,17 +2,17 @@ import 'package:insta_app_flutter/entity/current_user.dart';
 import 'package:insta_app_flutter/usecases/search_usecase.dart';
 
 class SearchViewModel {
-  List<CurrentUser> _allUsers;
+  List<CurrentUser> allUsers;
   final SearchUsecase _searchUsecase;
 
   SearchViewModel(
-    this._allUsers,
+    this.allUsers,
     this._searchUsecase,
   );
 
   Future<void> fetchAllUsers() async {
     try {
-      _allUsers = await _searchUsecase.fetchAllUsers();
+      allUsers = await _searchUsecase.fetchAllUsers();
     } catch (e) {
       print('Error! $e');
     }

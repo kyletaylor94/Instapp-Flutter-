@@ -5,6 +5,9 @@ import 'package:insta_app_flutter/presentation/auth/widgets/auth_button.dart';
 import 'package:insta_app_flutter/presentation/auth/widgets/auth_navigator_button.dart';
 import 'package:insta_app_flutter/presentation/auth/widgets/auth_textfield.dart';
 import 'package:insta_app_flutter/presentation/auth/widgets/custom_background.dart';
+import 'package:insta_app_flutter/presentation/bottomtabbar/bottom_navigation_bar.dart';
+import 'package:insta_app_flutter/viewmodel/auth_view_model.dart';
+import 'package:provider/provider.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -16,15 +19,57 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   File? _avatarImage;
 
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+
+  Future<void> _signUp(BuildContext content) async {
+    final authViewModel = Provider.of<AuthViewModel>(content, listen: false);
+
+    await authViewModel.signUp(
+      _nameController.text,
+      _emailController.text,
+      _passwordController.text,
+      _confirmPasswordController.text,
+    );
+
+    if (authViewModel.isAuthenticated == true) {
+      if (content.mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const BottomNavBar(),
+          ),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Registration failed!'),
+        ),
+      );
+    }
+  }
+
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
-
     if (pickedFile != null) {
       setState(() {
         _avatarImage = File(pickedFile.path);
       });
     }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    _nameController.dispose();
+    super.dispose();
   }
 
   @override
@@ -46,28 +91,11 @@ class _RegisterPageState extends State<RegisterPage> {
                 const SizedBox(height: 20),
                 createAvatarPicker(),
                 const SizedBox(height: 20),
-                const AuthTextfield(
-                  icon: Icons.email,
-                  placeholder: 'Email',
+                _createTextfields(context),
+                AuthButton(
+                  placeholder: 'Sign up',
+                  task: () async => await _signUp(context),
                 ),
-                const SizedBox(height: 10),
-                const AuthTextfield(
-                  icon: Icons.lock,
-                  placeholder: 'Password',
-                  isPassword: true,
-                ),
-                const SizedBox(height: 10),
-                const AuthTextfield(
-                  icon: Icons.person,
-                  placeholder: 'Full name',
-                ),
-                const SizedBox(height: 10),
-                const AuthTextfield(
-                  icon: Icons.person,
-                  placeholder: 'Username',
-                ),
-                const SizedBox(height: 30),
-                AuthButton(placeholder: 'Sign up', task: () {}),
                 const Spacer(),
                 const AuthNavigatorButton(
                   placeholderTitle: "Already have an account?",
@@ -98,6 +126,39 @@ class _RegisterPageState extends State<RegisterPage> {
               )
             : null,
       ),
+    );
+  }
+
+  Widget _createTextfields(BuildContext context) {
+    return Column(
+      children: [
+        AuthTextfield(
+          icon: Icons.email,
+          placeholder: 'Email',
+          controller: _emailController,
+        ),
+        const SizedBox(height: 10),
+        AuthTextfield(
+          icon: Icons.lock,
+          placeholder: 'Password',
+          isPassword: true,
+          controller: _passwordController,
+        ),
+        const SizedBox(height: 10),
+        AuthTextfield(
+          icon: Icons.lock,
+          placeholder: 'Confirm Password',
+          isPassword: true,
+          controller: _confirmPasswordController,
+        ),
+        const SizedBox(height: 10),
+        AuthTextfield(
+          icon: Icons.person,
+          placeholder: 'Full name',
+          controller: _nameController,
+        ),
+        const SizedBox(height: 30),
+      ],
     );
   }
 }

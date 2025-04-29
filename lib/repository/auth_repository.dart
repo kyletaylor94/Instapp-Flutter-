@@ -1,18 +1,27 @@
 import 'package:insta_app_flutter/entity/current_user.dart';
+import 'package:insta_app_flutter/entity/user.dart';
 import 'package:insta_app_flutter/services/auth_service.dart';
 
 abstract class AuthRepository {
+  Future<void> fetchTokens();
   Future<void> login(String email, String password);
-  Future<void> register(
-      String email, String password, String fullName, String userName);
+   Future<void> register(
+      String name, String email, String password, String confirmPassword);
   Future<void> logout();
   Future<CurrentUser> fetchCurrentUser();
+
+  Future<User> fetchCurrentUserFromAPI();
 }
 
 class AuthRepositoryImpl extends AuthRepository {
   final AuthService _authService;
 
   AuthRepositoryImpl(this._authService);
+
+  @override
+  Future<void> fetchTokens() async {
+    return await _authService.fetchToken();
+  }
 
   @override
   Future<CurrentUser> fetchCurrentUser() async {
@@ -28,10 +37,14 @@ class AuthRepositoryImpl extends AuthRepository {
   Future<void> logout() async {
     return await _authService.logout();
   }
-
+  
   @override
-  Future<void> register(
-      String email, String password, String fullName, String userName) async {
-    return await _authService.register(email, password, fullName, userName);
+  Future<void> register(String name, String email, String password, String confirmPassword) async {
+    return await _authService.register(name, email, password, confirmPassword);
   }
+  
+  @override
+  Future<User> fetchCurrentUserFromAPI() async {
+    return await _authService.fetchCurrentUserFromAPI();
+  }  
 }
