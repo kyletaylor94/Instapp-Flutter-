@@ -1,8 +1,13 @@
+import 'package:colorful_print/colorful_print.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/widgets.dart';
 import 'package:insta_app_flutter/data/constants.dart';
 import 'package:insta_app_flutter/data/mock_users.dart';
 import 'package:insta_app_flutter/entity/current_user.dart';
+import 'package:insta_app_flutter/entity/devicetoken_post_entity.dart';
+import 'package:insta_app_flutter/entity/login_post_entity.dart';
+import 'package:insta_app_flutter/entity/register_post_entity.dart';
 import 'package:insta_app_flutter/entity/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
@@ -56,35 +61,41 @@ class AuthServiceImpl extends AuthService {
       DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
 
-      final response =
-          await dio.post(constants.baseUrl + constants.fetchDeviceUrl, data: {
-        "deviceName": androidInfo.model,
-        "deviceToken": "apn-token-${uuid.v4()}",
-        "platform": "ios"
-      });
+      final requestData = DeviceTokenPostEntity(
+        deviceName: androidInfo.model,
+        deviceToken: "apn-token-${uuid.v4()}",
+        platform: "android",
+      );
+
+      final response = await dio.post(
+        constants.baseUrl + constants.fetchDeviceUrl,
+        data: requestData.toJson(),
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = response.data;
 
         print('Token API response: $data');
 
-        // Use "token" instead of "authToken" to match the API response
-        if (data['token'] == null || data['refreshToken'] == null) {
-          throw Exception('Auth or refresh token is null in API response');
-        }
-
-        // Use "token" instead of "authToken"
         authToken = data['token'];
         refreshToken = data['refreshToken'];
 
         await saveTokens(authToken!, refreshToken!);
-        print('Save successfully: $authToken, $refreshToken');
+
+        printColor(
+          'Save successfully: $authToken, $refreshToken',
+          textColor: TextColor.green,
+        );
       } else {
+        printColor(
+          'Failed to fetch token! status code: ${response.statusCode}',
+          textColor: TextColor.red,
+        );
         throw Exception(
             'Failed to fetch token! Status code: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error in fetchToken: $e');
+      printColor('Error in fetchToken: $e', textColor: TextColor.red);
       rethrow;
     }
   }
@@ -92,26 +103,30 @@ class AuthServiceImpl extends AuthService {
   @override
   Future<void> login(String email, String password) async {
     await loadTokens();
+    await _loadHeaders();
 
-    final requestData = {
-      "email": email,
-      "password": password,
-    };
-
-    dio.options.headers['content-Type'] = 'application/json';
-    dio.options.headers['authorization'] = 'Bearer $authToken';
+    final requestData = LoginPostEntity(
+      email: email,
+      password: password,
+    );
 
     try {
       final response = await dio.post(
         constants.baseUrl + constants.loginUrl,
-        data: requestData,
+        data: requestData.toJson(),
       );
-      print('Login was success: ${response.data}');
+      printColor(
+        'Login was success: ${response.data}',
+        textColor: TextColor.green,
+      );
     } catch (e) {
       if (e is DioException && e.response != null) {
-        print('Server error details: ${e.response?.data}');
+        printColor(
+          'Server error details: ${e.response?.data}',
+          textColor: TextColor.red,
+        );
       } else {
-        print('Login failed with error: $e');
+        printColor('Login failed with error: $e', textColor: TextColor.red);
       }
     }
   }
@@ -119,18 +134,20 @@ class AuthServiceImpl extends AuthService {
   @override
   Future<void> logout() async {
     await loadTokens();
-
-    dio.options.headers['content-Type'] = 'application/json';
-    dio.options.headers['authorization'] = 'Bearer $authToken';
+    await _loadHeaders();
 
     try {
       final response = await dio.post(constants.baseUrl + constants.logoutUrl);
-      print('LogOut was success: ${response.data}');
+      printColor(
+        'LogOut was success: ${response.data}',
+        textColor: TextColor.green,
+      );
     } catch (e) {
       if (e is DioException && e.response != null) {
-        print('Server error details: ${e.response?.data}');
+        printColor('Server error details: ${e.response?.data}',
+            textColor: TextColor.red);
       } else {
-        print('Logout failed with error: $e');
+        printColor('Logout failed with error: $e', textColor: TextColor.red);
       }
     }
   }
@@ -139,27 +156,30 @@ class AuthServiceImpl extends AuthService {
   Future<void> register(String name, String email, String password,
       String confirmPassword) async {
     await loadTokens();
+    await _loadHeaders();
 
-    final requestData = {
-      "name": name,
-      "email": email,
-      "password": password,
-      "confirmPassword": confirmPassword,
-    };
-
-    dio.options.headers['content-Type'] = 'application/json';
-    dio.options.headers['authorization'] = 'Bearer $authToken';
+    final requestData = RegisterPostEntity(
+      name: name,
+      email: email,
+      password: password,
+      confirmPassword: confirmPassword,
+    );
 
     try {
-      final response = await dio.post(constants.baseUrl + constants.registerUrl,
-          data: requestData);
+      final response = await dio.post(
+        constants.baseUrl + constants.registerUrl,
+        data: requestData.toJson(),
+      );
 
-      print('Registration was success: ${response.data}');
+      printColor('Registration was success: ${response.data}',
+          textColor: TextColor.green);
     } catch (e) {
       if (e is DioException && e.response != null) {
-        print('Server error details: ${e.response?.data}');
+        printColor('Server error details: ${e.response?.data}',
+            textColor: TextColor.red);
       } else {
-        print('Registration failed with error: $e');
+        printColor('Registration failed with error: $e',
+            textColor: TextColor.red);
       }
     }
   }
@@ -172,34 +192,47 @@ class AuthServiceImpl extends AuthService {
   @override
   Future<User> fetchCurrentUserFromAPI() async {
     await loadTokens();
+    await _loadHeaders();
 
     // Check if tokens are valid, if not fetch new ones
     if (authToken == null || refreshToken == null) {
-      print('No tokens found when fetching user, fetching new tokens');
+      printColor('No tokens found when fetching user, fetching new tokens',
+          textColor: TextColor.red);
       await fetchToken();
     }
-
-    dio.options.headers['content-Type'] = 'application/json';
-    dio.options.headers['authorization'] = 'Bearer $authToken';
 
     try {
       final response =
           await dio.get(constants.baseUrl + constants.fetchCurrenUserUrl);
-      print('Current user API response: ${response.data}');
+      printColor(
+        'Current user API response: ${response.data}',
+        textColor: TextColor.green,
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return User.fromJson(response.data);
       } else {
+        printColor('Failed to fetch user: ${response.statusCode}',
+            textColor: TextColor.red);
         throw Exception('Failed to fetch user: ${response.statusCode}');
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        print('Server error details: ${e.response?.data}');
-        print('Status code: ${e.response?.statusCode}');
+        printColor('Server error details: ${e.response?.data}',
+            textColor: TextColor.red);
+        printColor('Status code: ${e.response?.statusCode}',
+            textColor: TextColor.red);
       } else {
-        print('Cannot fetch current user with this error: $e');
+        printColor('Cannot fetch current user with this error: $e');
       }
       throw Exception('Failed to fetch current user');
     }
+  }
+}
+
+extension AuthServiceExtensions on AuthServiceImpl {
+  Future<void> _loadHeaders() async {
+    dio.options.headers['content-Type'] = 'application/json';
+    dio.options.headers['authorization'] = 'Bearer $authToken';
   }
 }

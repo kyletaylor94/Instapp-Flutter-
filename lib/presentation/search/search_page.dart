@@ -44,9 +44,11 @@ class _SearchPageState extends State<SearchPage> {
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       ),
       onChanged: (value) {
-        setState(() {
-          query = value.toLowerCase();
-        });
+        setState(
+          () {
+            query = value.toLowerCase();
+          },
+        );
       },
     );
   }

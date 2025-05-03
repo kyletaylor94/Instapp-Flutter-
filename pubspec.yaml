@@ -7,6 +7,7 @@ environment:
   sdk: ^3.5.4
 
 dependencies:
+  colorful_print: ^0.1.2
   device_info_plus: ^11.4.0
   dio: ^5.8.0+1
   equatable: ^2.0.7

@@ -56,7 +56,7 @@ class AuthUsecaseImpl extends AuthUsecase {
   Future<Tuple2<User?, bool>> checkLoginStatus() async {
     final user = await fetchCurrentUserFromAPI();
 
-    print('CHECKLOGINSTATUS: \(${user.isActive})');
+    print('CHECKLOGINSTATUS: (${user.isActive})');
 
     if (user.isActive != null) {
       return Tuple2(user, true);

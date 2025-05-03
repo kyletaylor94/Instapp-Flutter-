@@ -151,7 +151,11 @@ class FeedPage extends StatelessWidget {
             style: const TextStyle(color: Colors.black),
             children: [
               const TextSpan(
-                  text: 'kyle ', style: TextStyle(fontWeight: FontWeight.bold)),
+                text: 'kyle ',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const TextSpan(text: 'and '),
               TextSpan(
                 recognizer: TapGestureRecognizer()
